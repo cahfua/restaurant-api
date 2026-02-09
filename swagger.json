@@ -1,0 +1,186 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Restaurant Ordering & Menu Management API",
+    "version": "1.0.0",
+    "description": "Week 05: CRUD for restaurants and menuItems with error handling."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/restaurants": {
+      "get": {
+        "summary": "Get all restaurants",
+        "responses": {
+          "200": { "description": "OK" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "summary": "Create a restaurant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Restaurant" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created" },
+          "400": { "description": "Bad request" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/restaurants/{id}": {
+      "get": {
+        "summary": "Get one restaurant by id",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "put": {
+        "summary": "Update a restaurant",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Restaurant" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "No content" },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a restaurant",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "No content" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+
+    "/menuItems": {
+      "get": {
+        "summary": "Get all menu items",
+        "responses": {
+          "200": { "description": "OK" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "summary": "Create a menu item",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MenuItem" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created" },
+          "400": { "description": "Bad request" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/menuItems/{id}": {
+      "get": {
+        "summary": "Get one menu item by id",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "put": {
+        "summary": "Update a menu item",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MenuItem" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "No content" },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a menu item",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "No content" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Restaurant": {
+        "type": "object",
+        "required": ["name", "location", "phone", "hours"],
+        "properties": {
+          "name": { "type": "string", "example": "Island Grill" },
+          "location": { "type": "string", "example": "Utah" },
+          "phone": { "type": "string", "example": "801-555-1234" },
+          "hours": { "type": "string", "example": "9am-9pm" }
+        }
+      },
+      "MenuItem": {
+        "type": "object",
+        "required": ["name", "description", "price", "category", "restaurantId", "isAvailable", "imageUrl"],
+        "properties": {
+          "name": { "type": "string", "example": "Chicken Teriyaki Plate" },
+          "description": { "type": "string", "example": "Grilled chicken, rice, and salad." },
+          "price": { "type": "number", "example": 12.99 },
+          "category": { "type": "string", "example": "Plates" },
+          "restaurantId": { "type": "string", "example": "64b8f9b8f9b8f9b8f9b8f9b8" },
+          "isAvailable": { "type": "boolean", "example": true },
+          "imageUrl": { "type": "string", "example": "https://example.com/teriyaki.jpg" }
+        }
+      }
+    }
+  }
+}
