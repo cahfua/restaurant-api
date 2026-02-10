@@ -7,6 +7,10 @@
   },
   "servers": [
     {
+      "url": "https://restaurant-api-niie.onrender.com",
+      "description": "Render (Production)"
+    },
+    {
       "url": "http://localhost:3000",
       "description": "Local server"
     }
