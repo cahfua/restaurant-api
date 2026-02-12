@@ -3,7 +3,7 @@
   "info": {
     "title": "Restaurant Ordering & Menu Management API",
     "version": "1.0.0",
-    "description": "Week 05: CRUD for restaurants and menuItems with error handling."
+    "description": "CRUD for restaurants, menuItems, and orders with error handling."
   },
   "servers": [
     {
@@ -41,11 +41,17 @@
         }
       }
     },
+
     "/restaurants/{id}": {
       "get": {
         "summary": "Get one restaurant by id",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "responses": {
           "200": { "description": "OK" },
@@ -57,7 +63,12 @@
       "put": {
         "summary": "Update a restaurant",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -77,7 +88,12 @@
       "delete": {
         "summary": "Delete a restaurant",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "responses": {
           "204": { "description": "No content" },
@@ -113,11 +129,17 @@
         }
       }
     },
+
     "/menuItems/{id}": {
       "get": {
         "summary": "Get one menu item by id",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "responses": {
           "200": { "description": "OK" },
@@ -129,7 +151,12 @@
       "put": {
         "summary": "Update a menu item",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -149,7 +176,12 @@
       "delete": {
         "summary": "Delete a menu item",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "responses": {
           "204": { "description": "No content" },
@@ -185,11 +217,17 @@
         }
       }
     },
+
     "/orders/{id}": {
       "get": {
         "summary": "Get one order by id",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "responses": {
           "200": { "description": "OK" },
@@ -201,7 +239,12 @@
       "put": {
         "summary": "Update an order",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -221,7 +264,12 @@
       "delete": {
         "summary": "Delete an order",
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
         ],
         "responses": {
           "204": { "description": "No content" },
@@ -232,50 +280,53 @@
       }
     }
   },
+
   "components": {
     "schemas": {
       "Restaurant": {
         "type": "object",
         "required": ["name", "location", "phone", "hours"],
         "properties": {
-          "name": { "type": "string", "example": "Island Grill" },
-          "location": { "type": "string", "example": "Utah" },
-          "phone": { "type": "string", "example": "801-555-1234" },
-          "hours": { "type": "string", "example": "9am-9pm" }
+          "name": { "type": "string", "example": "String" },
+          "location": { "type": "string", "example": "String" },
+          "phone": { "type": "string", "example": "000-000-0000" },
+          "hours": { "type": "string", "example": "00am-00pm" }
         }
       },
+
       "MenuItem": {
         "type": "object",
         "required": ["name", "description", "price", "category", "restaurantId", "isAvailable", "imageUrl"],
         "properties": {
-          "name": { "type": "string", "example": "Chicken Teriyaki Plate" },
-          "description": { "type": "string", "example": "Grilled chicken, rice, and salad." },
-          "price": { "type": "number", "example": 12.99 },
-          "category": { "type": "string", "example": "Plates" },
-          "restaurantId": { "type": "string", "example": "64b8f9b8f9b8f9b8f9b8f9b8" },
+          "name": { "type": "string", "example": "String" },
+          "description": { "type": "string", "example": "String" },
+          "price": { "type": "number", "example": 0 },
+          "category": { "type": "string", "example": "String" },
+          "restaurantId": { "type": "string", "example": "ObjectId" },
           "isAvailable": { "type": "boolean", "example": true },
-          "imageUrl": { "type": "string", "example": "https://example.com/teriyaki.jpg" }
+          "imageUrl": { "type": "string", "example": "https://example.com/image.jpg" }
         }
       },
+
       "Order": {
         "type": "object",
         "required": ["restaurantId", "items", "status"],
         "properties": {
-          "restaurantId": { "type": "string", "example": "698a437a556b9e6d662a83fb" },
+          "restaurantId": { "type": "string", "example": "ObjectId" },
           "items": {
             "type": "array",
             "items": {
               "type": "object",
               "required": ["menuItemId", "quantity", "price"],
               "properties": {
-                "menuItemId": { "type": "string", "example": "698d14653877ac1618456b75" },
-                "quantity": { "type": "integer", "example": 2 },
-                "price": { "type": "number", "example": 12.99 }
+                "menuItemId": { "type": "string", "example": "ObjectId" },
+                "quantity": { "type": "number", "example": 1 },
+                "price": { "type": "number", "example": 0 }
               }
             }
           },
-          "status": { "type": "string", "example": "completed" },
-          "notes": { "type": "string", "example": "Picked up at 6:10pm." }
+          "status": { "type": "string", "example": "pending" },
+          "notes": { "type": "string", "example": "String" }
         }
       }
     }
