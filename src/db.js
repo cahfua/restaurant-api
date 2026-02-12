@@ -8,6 +8,10 @@ let db;
 export async function connectDB() {
   if (db) return db;
 
+  if (!process.env.MONGO_URI) {
+    throw new Error("MONGO_URI is missing in environment variables.");
+  }
+
   client = new MongoClient(process.env.MONGO_URI);
   await client.connect();
 
