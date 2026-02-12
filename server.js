@@ -1,3 +1,4 @@
+// server.js
 import express from "express";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
@@ -8,6 +9,7 @@ import { fileURLToPath } from "url";
 import { connectDB } from "./src/db.js";
 import restaurantsRoutes from "./src/routes/restaurants.js";
 import menuItemsRoutes from "./src/routes/menuItems.js";
+import ordersRoutes from "./src/routes/orders.js";
 
 dotenv.config();
 
@@ -26,6 +28,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // routes
 app.use("/restaurants", restaurantsRoutes);
 app.use("/menuItems", menuItemsRoutes);
+app.use("/orders", ordersRoutes);
 
 // test route
 app.get("/", (req, res) => {
