@@ -158,6 +158,78 @@
           "500": { "description": "Server error" }
         }
       }
+    },
+
+    "/orders": {
+      "get": {
+        "summary": "Get all orders",
+        "responses": {
+          "200": { "description": "OK" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "summary": "Create an order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Order" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created" },
+          "400": { "description": "Bad request" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "summary": "Get one order by id",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "put": {
+        "summary": "Update an order",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Order" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "No content" },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an order",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "No content" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      }
     }
   },
   "components": {
@@ -183,6 +255,27 @@
           "restaurantId": { "type": "string", "example": "64b8f9b8f9b8f9b8f9b8f9b8" },
           "isAvailable": { "type": "boolean", "example": true },
           "imageUrl": { "type": "string", "example": "https://example.com/teriyaki.jpg" }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "required": ["restaurantId", "items", "status"],
+        "properties": {
+          "restaurantId": { "type": "string", "example": "698a437a556b9e6d662a83fb" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["menuItemId", "quantity", "price"],
+              "properties": {
+                "menuItemId": { "type": "string", "example": "698d14653877ac1618456b75" },
+                "quantity": { "type": "integer", "example": 2 },
+                "price": { "type": "number", "example": 12.99 }
+              }
+            }
+          },
+          "status": { "type": "string", "example": "completed" },
+          "notes": { "type": "string", "example": "Picked up at 6:10pm." }
         }
       }
     }
