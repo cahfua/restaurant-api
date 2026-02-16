@@ -1,19 +1,20 @@
 import express from "express";
 import { ObjectId } from "mongodb";
 import { connectDB } from "../db.js";
-import { ensureAuth } from "../middleware/auth.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
 function validateOrder(body) {
   const errors = [];
+
   if (!body.restaurantId || typeof body.restaurantId !== "string")
     errors.push("restaurantId is required (string)");
 
   if (!Array.isArray(body.items) || body.items.length === 0)
     errors.push("items is required (array) and must have at least 1 item");
 
-  if (body.items && Array.isArray(body.items)) {
+  if (Array.isArray(body.items)) {
     body.items.forEach((item, idx) => {
       if (!item.menuItemId || typeof item.menuItemId !== "string")
         errors.push(`items[${idx}].menuItemId is required (string)`);
@@ -61,7 +62,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST (protected)
-router.post("/", ensureAuth, async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
     const errors = validateOrder(req.body);
     if (errors.length) return res.status(400).json({ errors });
@@ -70,7 +71,6 @@ router.post("/", ensureAuth, async (req, res) => {
       return res.status(400).json({ error: "restaurantId must be a valid ObjectId string." });
     }
 
-    // Validate menuItemId values
     for (const item of req.body.items) {
       if (!ObjectId.isValid(item.menuItemId)) {
         return res.status(400).json({ error: "Each items[].menuItemId must be a valid ObjectId string." });
@@ -79,11 +79,7 @@ router.post("/", ensureAuth, async (req, res) => {
 
     const db = await connectDB();
 
-    // Ensure restaurant exists
-    const restaurant = await db
-      .collection("restaurants")
-      .findOne({ _id: new ObjectId(req.body.restaurantId) });
-
+    const restaurant = await db.collection("restaurants").findOne({ _id: new ObjectId(req.body.restaurantId) });
     if (!restaurant) {
       return res.status(400).json({ error: "restaurantId does not match an existing restaurant." });
     }
@@ -104,9 +100,11 @@ router.post("/", ensureAuth, async (req, res) => {
 
     res.status(201).json({
       _id: result.insertedId,
-      ...doc,
       restaurantId: req.body.restaurantId,
-      items: req.body.items // return readable strings
+      items: req.body.items,
+      status: doc.status,
+      notes: doc.notes,
+      createdAt: doc.createdAt,
     });
   } catch (err) {
     res.status(500).json({ error: "Failed to create order." });
@@ -114,7 +112,7 @@ router.post("/", ensureAuth, async (req, res) => {
 });
 
 // PUT (protected)
-router.put("/:id", ensureAuth, async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     if (!ObjectId.isValid(id)) return res.status(400).json({ error: "Invalid id." });
@@ -157,8 +155,8 @@ router.put("/:id", ensureAuth, async (req, res) => {
   }
 });
 
-// DELETE (public)
-router.delete("/:id", async (req, res) => {
+// DELETE (protected)
+router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     if (!ObjectId.isValid(id)) return res.status(400).json({ error: "Invalid id." });

@@ -1,7 +1,7 @@
 import express from "express";
 import { ObjectId } from "mongodb";
 import { connectDB } from "../db.js";
-import { ensureAuth } from "../middleware/auth.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST (protected)
-router.post("/", ensureAuth, async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
     const errors = validateUser(req.body);
     if (errors.length) return res.status(400).json({ errors });
@@ -62,7 +62,7 @@ router.post("/", ensureAuth, async (req, res) => {
 });
 
 // PUT (protected)
-router.put("/:id", ensureAuth, async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     if (!ObjectId.isValid(id)) return res.status(400).json({ error: "Invalid id." });
@@ -89,8 +89,8 @@ router.put("/:id", ensureAuth, async (req, res) => {
   }
 });
 
-// DELETE (public or protected — your choice; keeping public for now)
-router.delete("/:id", async (req, res) => {
+// DELETE (protected)
+router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     if (!ObjectId.isValid(id)) return res.status(400).json({ error: "Invalid id." });

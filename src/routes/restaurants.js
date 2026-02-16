@@ -4,7 +4,6 @@ import { connectDB } from "../db.js";
 
 const router = express.Router();
 
-// simple validation for Week 05
 function validateRestaurant(body) {
   const errors = [];
   if (!body.name || typeof body.name !== "string") errors.push("name is required (string)");
@@ -53,7 +52,7 @@ router.post("/", async (req, res) => {
       location: req.body.location.trim(),
       phone: req.body.phone.trim(),
       hours: req.body.hours.trim(),
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     const result = await db.collection("restaurants").insertOne(doc);
@@ -79,8 +78,8 @@ router.put("/:id", async (req, res) => {
         location: req.body.location.trim(),
         phone: req.body.phone.trim(),
         hours: req.body.hours.trim(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     };
 
     const result = await db.collection("restaurants").updateOne({ _id: new ObjectId(id) }, update);

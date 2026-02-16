@@ -4,10 +4,7 @@ import passport from "passport";
 const router = express.Router();
 
 // Start OAuth
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 // Callback
 router.get(
@@ -27,11 +24,13 @@ router.get("/logout", (req, res) => {
   });
 });
 
-// Status (useful for video demo)
+// Status
 router.get("/status", (req, res) => {
   res.status(200).json({
-    authenticated: req.isAuthenticated(),
-    user: req.user ? { _id: req.user._id, email: req.user.email, name: req.user.name } : null,
+    authenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+    user: req.user
+      ? { _id: req.user._id, email: req.user.email, name: req.user.name }
+      : null,
   });
 });
 

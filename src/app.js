@@ -5,10 +5,13 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 
 import "./auth/passport.js"; // initializes Google strategy + serialize/deserialize
+import { connectDB } from "./db.js";
 
 import restaurantsRoutes from "./routes/restaurants.js";
 import menuItemsRoutes from "./routes/menuItems.js";
@@ -24,6 +27,15 @@ const app = express();
 app.set("trust proxy", 1);
 
 app.use(express.json());
+app.use(cookieParser());
+
+// CORS (Swagger is same-origin on Render, but this keeps local flexible)
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 
 // Sessions (required for Passport OAuth)
 app.use(
@@ -32,9 +44,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      // secure cookies only in production (Render)
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   })
 );
@@ -62,5 +73,8 @@ app.use("/users", usersRoutes);
 
 // Root
 app.get("/", (req, res) => res.send("API running"));
+
+// Connect DB once on boot (Render/local). Tests mock connectDB.
+connectDB().catch((err) => console.error("DB connect error:", err?.message || err));
 
 export default app;

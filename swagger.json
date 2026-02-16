@@ -3,7 +3,7 @@
   "info": {
     "title": "Restaurant Ordering & Menu Management API",
     "version": "1.0.0",
-    "description": "CRUD for restaurants, menuItems, and orders with error handling."
+    "description": "CRUD for restaurants, menuItems, orders, and users. OAuth (Google) protects write routes."
   },
   "servers": [
     {
@@ -15,9 +15,54 @@
       "description": "Local server"
     }
   ],
+  "tags": [
+    { "name": "Auth", "description": "Google OAuth routes" },
+    { "name": "Restaurants", "description": "Restaurant CRUD" },
+    { "name": "MenuItems", "description": "Menu item CRUD" },
+    { "name": "Orders", "description": "Order CRUD" },
+    { "name": "Users", "description": "User CRUD" }
+  ],
   "paths": {
+    "/auth/google": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Start Google OAuth login",
+        "responses": {
+          "302": { "description": "Redirect to Google OAuth" }
+        }
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Google OAuth callback",
+        "responses": {
+          "302": { "description": "Redirect back to /api-docs after login" }
+        }
+      }
+    },
+    "/auth/status": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Check if user is authenticated",
+        "responses": {
+          "200": { "description": "Returns auth status and user profile (if logged in)" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Logout (destroy session)",
+        "responses": {
+          "200": { "description": "Logged out" }
+        }
+      }
+    },
+
     "/restaurants": {
       "get": {
+        "tags": ["Restaurants"],
         "summary": "Get all restaurants",
         "responses": {
           "200": { "description": "OK" },
@@ -25,6 +70,7 @@
         }
       },
       "post": {
+        "tags": ["Restaurants"],
         "summary": "Create a restaurant",
         "requestBody": {
           "required": true,
@@ -44,14 +90,10 @@
 
     "/restaurants/{id}": {
       "get": {
+        "tags": ["Restaurants"],
         "summary": "Get one restaurant by id",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
           "200": { "description": "OK" },
@@ -61,22 +103,14 @@
         }
       },
       "put": {
+        "tags": ["Restaurants"],
         "summary": "Update a restaurant",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Restaurant" }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Restaurant" } } }
         },
         "responses": {
           "204": { "description": "No content" },
@@ -86,14 +120,10 @@
         }
       },
       "delete": {
+        "tags": ["Restaurants"],
         "summary": "Delete a restaurant",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
           "204": { "description": "No content" },
@@ -106,6 +136,7 @@
 
     "/menuItems": {
       "get": {
+        "tags": ["MenuItems"],
         "summary": "Get all menu items",
         "responses": {
           "200": { "description": "OK" },
@@ -113,18 +144,16 @@
         }
       },
       "post": {
-        "summary": "Create a menu item",
+        "tags": ["MenuItems"],
+        "summary": "Create a menu item (OAuth required)",
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/MenuItem" }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MenuItem" } } }
         },
         "responses": {
           "201": { "description": "Created" },
           "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" },
           "500": { "description": "Server error" }
         }
       }
@@ -132,14 +161,10 @@
 
     "/menuItems/{id}": {
       "get": {
+        "tags": ["MenuItems"],
         "summary": "Get one menu item by id",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
           "200": { "description": "OK" },
@@ -149,43 +174,33 @@
         }
       },
       "put": {
-        "summary": "Update a menu item",
+        "tags": ["MenuItems"],
+        "summary": "Update a menu item (OAuth required)",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/MenuItem" }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MenuItem" } } }
         },
         "responses": {
           "204": { "description": "No content" },
           "400": { "description": "Invalid request" },
+          "401": { "description": "Unauthorized" },
           "404": { "description": "Not found" },
           "500": { "description": "Server error" }
         }
       },
       "delete": {
-        "summary": "Delete a menu item",
+        "tags": ["MenuItems"],
+        "summary": "Delete a menu item (OAuth required)",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
           "204": { "description": "No content" },
           "400": { "description": "Invalid id" },
+          "401": { "description": "Unauthorized" },
           "404": { "description": "Not found" },
           "500": { "description": "Server error" }
         }
@@ -194,6 +209,7 @@
 
     "/orders": {
       "get": {
+        "tags": ["Orders"],
         "summary": "Get all orders",
         "responses": {
           "200": { "description": "OK" },
@@ -201,18 +217,16 @@
         }
       },
       "post": {
-        "summary": "Create an order",
+        "tags": ["Orders"],
+        "summary": "Create an order (OAuth required)",
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Order" }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } }
         },
         "responses": {
           "201": { "description": "Created" },
           "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" },
           "500": { "description": "Server error" }
         }
       }
@@ -220,14 +234,10 @@
 
     "/orders/{id}": {
       "get": {
+        "tags": ["Orders"],
         "summary": "Get one order by id",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
           "200": { "description": "OK" },
@@ -237,43 +247,106 @@
         }
       },
       "put": {
-        "summary": "Update an order",
+        "tags": ["Orders"],
+        "summary": "Update an order (OAuth required)",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Order" }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } }
         },
         "responses": {
           "204": { "description": "No content" },
           "400": { "description": "Invalid request" },
+          "401": { "description": "Unauthorized" },
           "404": { "description": "Not found" },
           "500": { "description": "Server error" }
         }
       },
       "delete": {
-        "summary": "Delete an order",
+        "tags": ["Orders"],
+        "summary": "Delete an order (OAuth required)",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
-          }
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
         "responses": {
           "204": { "description": "No content" },
           "400": { "description": "Invalid id" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "responses": {
+          "200": { "description": "OK" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create a user (OAuth required)",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+        },
+        "responses": {
+          "201": { "description": "Created" },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+
+    "/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get one user by id",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update a user (OAuth required)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+        },
+        "responses": {
+          "204": { "description": "No content" },
+          "400": { "description": "Invalid request" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete a user (OAuth required)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "No content" },
+          "400": { "description": "Invalid id" },
+          "401": { "description": "Unauthorized" },
           "404": { "description": "Not found" },
           "500": { "description": "Server error" }
         }
@@ -287,10 +360,10 @@
         "type": "object",
         "required": ["name", "location", "phone", "hours"],
         "properties": {
-          "name": { "type": "string", "example": "String" },
-          "location": { "type": "string", "example": "String" },
-          "phone": { "type": "string", "example": "000-000-0000" },
-          "hours": { "type": "string", "example": "00am-00pm" }
+          "name": { "type": "string", "example": "Island Grill" },
+          "location": { "type": "string", "example": "Apia, Samoa" },
+          "phone": { "type": "string", "example": "801-555-1234" },
+          "hours": { "type": "string", "example": "10:00am-9:00pm" }
         }
       },
 
@@ -298,13 +371,13 @@
         "type": "object",
         "required": ["name", "description", "price", "category", "restaurantId", "isAvailable", "imageUrl"],
         "properties": {
-          "name": { "type": "string", "example": "String" },
-          "description": { "type": "string", "example": "String" },
-          "price": { "type": "number", "example": 0 },
-          "category": { "type": "string", "example": "String" },
+          "name": { "type": "string", "example": "Chicken Teriyaki Plate" },
+          "description": { "type": "string", "example": "Grilled chicken, rice, and salad." },
+          "price": { "type": "number", "example": 12.99 },
+          "category": { "type": "string", "example": "Plates" },
           "restaurantId": { "type": "string", "example": "ObjectId" },
           "isAvailable": { "type": "boolean", "example": true },
-          "imageUrl": { "type": "string", "example": "https://example.com/image.jpg" }
+          "imageUrl": { "type": "string", "example": "https://example.com/teriyaki.jpg" }
         }
       },
 
@@ -321,12 +394,22 @@
               "properties": {
                 "menuItemId": { "type": "string", "example": "ObjectId" },
                 "quantity": { "type": "number", "example": 1 },
-                "price": { "type": "number", "example": 0 }
+                "price": { "type": "number", "example": 12.99 }
               }
             }
           },
           "status": { "type": "string", "example": "pending" },
-          "notes": { "type": "string", "example": "String" }
+          "notes": { "type": "string", "example": "No onions please" }
+        }
+      },
+
+      "User": {
+        "type": "object",
+        "required": ["name", "email", "isActive"],
+        "properties": {
+          "name": { "type": "string", "example": "Celestine Ahfua" },
+          "email": { "type": "string", "example": "ahfuacelestine@gmail.com" },
+          "isActive": { "type": "boolean", "example": true }
         }
       }
     }
