@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 
-import "./auth/passport.js"; // initializes Google strategy + serialize/deserialize
+import "./auth/passport.js";
 import { connectDB } from "./db.js";
 
 import restaurantsRoutes from "./routes/restaurants.js";
@@ -29,7 +29,7 @@ app.set("trust proxy", 1);
 app.use(express.json());
 app.use(cookieParser());
 
-// CORS (needed for local testing; Render swagger is same-origin)
+// CORS (Swagger on Render is same-origin, this keeps local flexible)
 app.use(
   cors({
     origin: true,
@@ -44,7 +44,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // TRUE on Render
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // must be true for SameSite=None
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   })
