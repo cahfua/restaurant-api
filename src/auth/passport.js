@@ -6,13 +6,23 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { connectDB } from "../db.js";
 import { ObjectId } from "mongodb";
 
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL } = process.env;
+
+if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET || !GOOGLE_CALLBACK_URL) {
+  console.error("MISSING GOOGLE ENV VARS:", {
+    GOOGLE_CLIENT_ID: !!GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: !!GOOGLE_CLIENT_SECRET,
+    GOOGLE_CALLBACK_URL: !!GOOGLE_CALLBACK_URL,
+  });
+}
+
 // Strategy
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || "",
+      clientID: GOOGLE_CLIENT_ID || "MISSING",
+      clientSecret: GOOGLE_CLIENT_SECRET || "MISSING",
+      callbackURL: GOOGLE_CALLBACK_URL || "MISSING",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -26,7 +36,7 @@ passport.use(
           { googleId },
           {
             $set: { email, name, updatedAt: new Date() },
-            $setOnInsert: { createdAt: new Date() },
+            $setOnInsert: { createdAt: new Date(), isActive: true },
           },
           { upsert: true, returnDocument: "after" }
         );
