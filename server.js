@@ -3,10 +3,12 @@ dotenv.config();
 
 import app from "./src/app.js";
 
-// Start server (don’t listen during tests)
+const PORT = process.env.PORT || 3000;
+
 if (process.env.NODE_ENV !== "test") {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log("Server running on", PORT));
+  app.listen(PORT, () => {
+    console.log(`Server running on ${PORT}`);
+  });
 }
 
 export default app;

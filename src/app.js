@@ -23,13 +23,13 @@ dotenv.config();
 
 const app = express();
 
-// Render runs behind a proxy
+// Render runs behind a proxy (needed for secure cookies)
 app.set("trust proxy", 1);
 
 app.use(express.json());
 app.use(cookieParser());
 
-// CORS
+// CORS (needed for local testing; Render swagger is same-origin)
 app.use(
   cors({
     origin: true,
@@ -37,17 +37,14 @@ app.use(
   })
 );
 
-/**
- * Sessions (required for Passport OAuth)
- */
+// Sessions (required for Passport OAuth)
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "dev_secret",
     resave: false,
     saveUninitialized: false,
-    proxy: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production", // TRUE on Render
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   })
@@ -77,7 +74,7 @@ app.use("/users", usersRoutes);
 // Root
 app.get("/", (req, res) => res.send("API running"));
 
-// Connect DB once on boot (Render/local). Tests mock connectDB.
+// Connect DB once on boot
 connectDB().catch((err) =>
   console.error("DB connect error:", err?.message || err)
 );
