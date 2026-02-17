@@ -29,7 +29,7 @@ app.set("trust proxy", 1);
 app.use(express.json());
 app.use(cookieParser());
 
-// CORS (Swagger is same-origin on Render, but this keeps local flexible)
+// CORS
 app.use(
   cors({
     origin: true,
@@ -37,12 +37,15 @@ app.use(
   })
 );
 
-// Sessions (required for Passport OAuth)
+/**
+ * Sessions (required for Passport OAuth)
+ */
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "dev_secret",
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -75,6 +78,8 @@ app.use("/users", usersRoutes);
 app.get("/", (req, res) => res.send("API running"));
 
 // Connect DB once on boot (Render/local). Tests mock connectDB.
-connectDB().catch((err) => console.error("DB connect error:", err?.message || err));
+connectDB().catch((err) =>
+  console.error("DB connect error:", err?.message || err)
+);
 
 export default app;
